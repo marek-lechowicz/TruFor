@@ -22,6 +22,7 @@ from dataset.dataset_IMD2020 import IMD2020
 from dataset.dataset_CASIA import CASIA
 from dataset.dataset_TampCOCO import tampCOCO
 from dataset.dataset_CompRAISE import compRAISE
+from dataset.dataset_FakeFlickr import FakeFlickr
 
 
 class myDataset(Dataset):
@@ -51,6 +52,15 @@ class myDataset(Dataset):
             if 'RAISE' in training_set:
                 self.dataset_list.append(compRAISE(crop_size, grid_crop, "dataset/data/compRAISE_train.txt", aug=aug))
 
+            if 'FF_flux_1_dev' in training_set:
+                self.dataset_list.append(FakeFlickr(crop_size, grid_crop, "dataset/data/fakeflickr_flux_1_dev_train_list.txt", aug=aug))
+
+            if 'FF_sd_3_5_large' in training_set:
+                self.dataset_list.append(FakeFlickr(crop_size, grid_crop, "dataset/data/fakeflickr_sd_3_5_large_train_list.txt", aug=aug))
+
+            if 'FF_real_rescaled' in training_set:
+                self.dataset_list.append(FakeFlickr(crop_size, grid_crop, "dataset/data/fakeflickr_real_rescaled_train_list.txt", aug=aug))
+
 
         elif mode == "valid":
             if 'FR' in valid_set:
@@ -72,6 +82,15 @@ class myDataset(Dataset):
             
             if 'RAISE' in valid_set:
                 self.dataset_list.append(compRAISE(crop_size, grid_crop, "dataset/data/compRAISE_valid.txt", max_dim=max_dim, aug=aug))
+
+            if 'FF_flux_1_dev' in valid_set:
+                self.dataset_list.append(FakeFlickr(crop_size, grid_crop, "dataset/data/fakeflickr_flux_1_dev_valid_list.txt", max_dim=max_dim, aug=aug))
+
+            if 'FF_sd_3_5_large' in valid_set:
+                self.dataset_list.append(FakeFlickr(crop_size, grid_crop, "dataset/data/fakeflickr_sd_3_5_large_valid_list.txt", max_dim=max_dim, aug=aug))
+
+            if 'FF_real_rescaled' in valid_set:
+                self.dataset_list.append(FakeFlickr(crop_size, grid_crop, "dataset/data/fakeflickr_real_rescaled_valid_list.txt", max_dim=max_dim, aug=aug))
 
         else:
             raise KeyError("Invalid mode: " + mode)

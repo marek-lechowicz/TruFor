@@ -84,6 +84,8 @@ def computeMCC(FP, TP, FN, TN):
 def computeF1(FP, TP, FN, TN):
     return 2*TP / np.maximum((2*TP + FN + FP), 1e-32)
 
+def computeIoU(FP, TP, FN, TN):
+    return TP / np.maximum((TP + FN + FP), 1e-32)
 
 
 def computeLocalizationMetrics(map, gt):
@@ -94,24 +96,32 @@ def computeLocalizationMetrics(map, gt):
         FP, TP, FN, TN, _  = computeMetricsContinue(map, gt0, gt1)
         f1  = computeF1(FP, TP, FN, TN)
         f1i = computeF1(TN, FN, TP, FP)
+        iou = computeIoU(FP, TP, FN, TN)
+        ioui = computeIoU(TN, FN, TP, FP)
         F1_best = max(np.max(f1), np.max(f1i))
+        IoU_best = max(np.max(iou), np.max(ioui))
     except:
         import traceback
         traceback.print_exc()
         F1_best = np.nan
+        IoU_best = np.nan
     
     # fixed threshold
     try:
         FP, TP, FN, TN  = computeMetrics_th(map, gt, gt0, gt1, 0.5)
         f1  = computeF1(FP, TP, FN, TN)
         f1i = computeF1(TN, FN, TP, FP)
+        iou = computeIoU(FP, TP, FN, TN)
+        ioui = computeIoU(TN, FN, TP, FP)
         F1_th = max(f1, f1i)
+        IoU_th = max(iou, ioui)
     except:
         import traceback
         traceback.print_exc()
         F1_th = np.nan
+        IoU_th = np.nan
         
-    return F1_best, F1_th
+    return F1_best, F1_th, IoU_best, IoU_th
     
     
 def computeDetectionMetrics(scores, labels):
@@ -175,9 +185,9 @@ for map_path in tqdm(glob(path + 'splicing*')):
     map = np.load(map_path)['map']
     
     # gt can be <0.1 or >0.1 depending on the dataset. DSO-1 has inverted masks, so <
-    gt  = np.array(Image.open(gt_path + os.path.basename(map_path[:-4])).convert('L')) < 0.1
+        gt  = np.array(Image.open(gt_path + os.path.basename(map_path[:-4])).convert('L')) < 0.1
     assert gt.shape == map.shape
-    F1_best, F1_th = computeLocalizationMetrics(map, gt)
+    F1_best, F1_th, IoU_best, IoU_th = computeLocalizationMetrics(map, gt)
     F1_best_list.append(F1_best)
     F1_th_list.append(F1_th)
     

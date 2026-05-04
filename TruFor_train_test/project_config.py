@@ -8,4 +8,5 @@ dataset_paths = {
     'CA'       : 'path/to/CA',
     'tampCOCO' : 'path/to/tampCOCO',
     'compRAISE': 'path/to/compRAISE',
+    'FF'       : '/home/marek/FakeFlickr/data',
 }
