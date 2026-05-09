@@ -24,9 +24,19 @@ from tqdm import tqdm
 import torch
 from torch.nn import functional as F
 
+try:
+    import wandb
+except ImportError:
+    wandb = None
+
 from lib.utils import AverageMeter
 from lib.utils import get_confusion_matrix, get_confusion_matrix_1ch
 from lib.utils import adjust_learning_rate as default_adjust_learning_rate
+
+
+def _wandb_log(payload, step=None):
+    if wandb is not None and wandb.run is not None:
+        wandb.log(payload, step=step)
 
 def train(epoch, num_epoch, epoch_iters, base_lr, num_iters,
           trainloader, optimizer, model, writer_dict,
@@ -69,6 +79,7 @@ def train(epoch, num_epoch, epoch_iters, base_lr, num_iters,
 
     writer.add_scalar('train_loss', print_loss, global_steps)
     writer.add_scalar('learning_rate', lr, global_steps)
+    _wandb_log({'train/loss': print_loss, 'train/learning_rate': lr, 'epoch': epoch}, step=global_steps)
     global_steps += 1
     writer_dict['train_global_steps'] = global_steps
 
@@ -261,8 +272,13 @@ def validate(config, testloader, model, writer_dict, valid_set="valid"):
         metric_dict['avg_mIoU_CONF']        = c_avg_mIoU.average()
         metric_dict['avg_mIoU_smooth_CONF'] = c_avg_mIoU_s.average()
 
-    for metric in metric_dict:
-        writer.add_scalar(valid_set + '_' + metric, metric_dict[metric], global_steps)
+    # Some metrics (e.g. avg_det_tnr on a real-free split) stay None when their
+    # AverageMeter is never updated; tensorboardX rejects None scalars.
+    loggable = {m: v for m, v in metric_dict.items() if v is not None}
+    for metric, value in loggable.items():
+        writer.add_scalar(valid_set + '_' + metric, value, global_steps)
+
+    _wandb_log({f'{valid_set}/{m}': v for m, v in loggable.items()}, step=global_steps)
 
     writer_dict['valid_global_steps'] = global_steps + 1
 

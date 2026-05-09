@@ -45,8 +45,8 @@ def main():
 
     for img_model, mask_model in MODEL_MAP.items():
         short    = MODEL_SHORT[img_model]
-        img_dir  = FF_ROOT / 'fake-flickr-inpaintings' / img_model / 'img'
-        mask_dir = FF_ROOT / 'masks_entities_ensemble' / mask_model / 'masks'
+        img_dir  = FF_ROOT / 'fake-flickr' / 'generated' / img_model / 'img'
+        mask_dir = FF_ROOT / 'fake-flickr' / 'masks' / mask_model / 'masks'
 
         train_lines, valid_lines, test_lines = [], [], []
         missing = 0
@@ -57,7 +57,6 @@ def main():
             stem = img_file.stem
             mask_file = mask_dir / f'mask_{stem}.png'
             if not mask_file.exists():
-                print(f'WARNING [{short}]: mask not found for {img_file.name}, skipping.')
                 missing += 1
                 continue
 

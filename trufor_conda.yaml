@@ -199,6 +199,7 @@ dependencies:
       - torch-dct==0.1.5
       - torchsummary==1.5.1
       - tqdm==4.64.0
+      - wandb
       - wcwidth==0.2.5
       - werkzeug==2.1.2
       - yacs==0.1.8

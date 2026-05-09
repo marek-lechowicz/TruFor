@@ -34,6 +34,12 @@ import torch.optim
 torch.autograd.set_detect_anomaly(True)
 from tensorboardX import SummaryWriter
 
+import yaml
+try:
+    import wandb
+except ImportError:
+    wandb = None
+
 from lib.config import config, update_config
 from lib.core.function import train, validate
 from lib.utils import get_model, get_optimizer
@@ -47,9 +53,12 @@ def main():
     parser = argparse.ArgumentParser(description='Train TruFor')
     parser.add_argument('-exp', '--experiment', type=str)
     parser.add_argument('-g',   '--gpu', type=int, default=[0], nargs="+", help='device(s)')
+    parser.add_argument('--wandb-project', type=str, default='fake-flickr')
+    parser.add_argument('--wandb-entity',  type=str, default='budalema')
+    parser.add_argument('--no-wandb', action='store_true', help='disable W&B logging')
     parser.add_argument('opts', help='other options', default=None, nargs=argparse.REMAINDER)
     args = parser.parse_args()
-    
+
     os.environ["CUDA_VISIBLE_DEVICES"] = ','.join(str(x) for x in args.gpu)
     args.gpu = range(len(args.gpu))
 
@@ -58,6 +67,18 @@ def main():
     logger, final_output_dir, tb_log_dir = create_logger(config, f'{args.experiment}', 'train')
     logger.info(config)
     logger.info('\n')
+
+    use_wandb = (wandb is not None) and (not args.no_wandb)
+    if use_wandb and wandb is not None:
+        wandb.init(
+            project = args.wandb_project,
+            entity  = args.wandb_entity,
+            name    = args.experiment,
+            tags    = ['TruFor', args.experiment],
+            config  = yaml.safe_load(config.dump()),
+            id      = args.experiment,           # so RESUME picks up the same run
+            resume  = 'allow',
+        )
 
     # cudnn setting
     cudnn.benchmark     = config.CUDNN.BENCHMARK
@@ -224,7 +245,8 @@ def main():
         logging.info("confusion_matrix:")
         logging.info(confusion_matrix)
 
-
+    if use_wandb and wandb is not None and wandb.run is not None:
+        wandb.finish()
 
 
 if __name__ == '__main__':
