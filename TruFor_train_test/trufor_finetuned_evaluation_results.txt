@@ -1,0 +1,39 @@
+Dataset: flux_fill_real_rescaled__vs__real_rescaled
+  checkpoint: /home/marek/projects/fake_flickr_sota/TruFor/TruFor_train_test/weights/trufor_ff_real_rescaled/best.pth.tar
+  test_acc:               0.8090
+  test_auc:               1.0000
+  precision:              0.7236
+  recall:                 1.0000
+  average_precision:      1.0000
+  mcc:                    0.6687
+  localization_f1_best:   0.9793
+  localization_f1_th_0.5: 0.9702
+  localization_iou_best:  0.9605
+  localization_iou_th_0.5:0.9447
+
+Dataset: flux_fill_flux_1_dev__vs__flux_1_dev
+  checkpoint: /home/marek/projects/fake_flickr_sota/TruFor/TruFor_train_test/weights/trufor_ff_flux_1_dev/best.pth.tar
+  test_acc:               0.5000
+  test_auc:               0.8490
+  precision:              0.5000
+  recall:                 1.0000
+  average_precision:      0.8674
+  mcc:                    0.0000
+  localization_f1_best:   0.8625
+  localization_f1_th_0.5: 0.7994
+  localization_iou_best:  0.7806
+  localization_iou_th_0.5:0.6958
+
+Dataset: flux_fill_sd_3_5_large__vs__sd_3_5_large
+  checkpoint: /home/marek/projects/fake_flickr_sota/TruFor/TruFor_train_test/weights/trufor_ff_sd_3_5_large/best.pth.tar
+  test_acc:               0.6495
+  test_auc:               0.9962
+  precision:              0.5879
+  recall:                 1.0000
+  average_precision:      0.9959
+  mcc:                    0.4193
+  localization_f1_best:   0.9719
+  localization_f1_th_0.5: 0.9557
+  localization_iou_best:  0.9469
+  localization_iou_th_0.5:0.9192
+

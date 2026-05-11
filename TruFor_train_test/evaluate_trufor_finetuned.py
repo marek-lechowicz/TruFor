@@ -42,6 +42,10 @@ from sklearn.metrics import (
 _HERE = os.path.dirname(os.path.realpath(__file__))
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
+# Configs reference pretrained weights with paths relative to TruFor_train_test
+# (e.g. 'pretrained_models/noiseprint++/noiseprint++.th'), matching how
+# train_fakeflickr.sh cds into this dir before launching train.py.
+os.chdir(_HERE)
 
 from lib.config import config, update_config
 from lib.utils import get_model
